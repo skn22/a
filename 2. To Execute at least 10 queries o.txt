@@ -1,0 +1,50 @@
+2. To Execute at least 10 queries on any suitable MongoDB database that demonstrates following:
+$ where queries(compare the values for two keys in a document, for instance, if we had a list of
+items and wanted to return documents where any two of the values are equal),
+Cursors (Limits, skips, sorts, advanced query options) take the result set of the query which
+finds the Employee's whose id is greater than 2 and assign it to the JavaScript variable
+'myEmployee' then use loop to iterate through all of the documents which are returned as part of
+the query and finally, print each document, in JSON readable format.
+Database commands(check the number of documents affected by an update, drop a collection
+from the shell) .
+
+db.employees.insertMany([
+    { _id: 1, name: "Alice", age: 30, department: "Sales", salary: 50000, bonus: 5000 },
+    { _id: 2, name: "Bob", age: 40, department: "Marketing", salary: 60000, bonus: 6000 },
+    { _id: 3, name: "Carol", age: 28, department: "Sales", salary: 55000, bonus: 5500 },
+    { _id: 4, name: "David", age: 35, department: "HR", salary: 45000, bonus: 5000 },
+    { _id: 5, name: "Eve", age: 29, department: "Sales", salary: 50000, bonus: 5000 }
+]);
+
+
+db.employees.find({ $where: "this.salary === this.bonus" });
+
+
+db.employees.find({ $where: "this.salary > this.bonus" });
+
+
+db.employees.find().sort({ salary: -1 });
+
+
+db.employees.find().limit(3);
+
+
+db.employees.find().skip(2);
+
+db.employees.find().sort({ age: 1, salary: 1 }).limit(2);
+
+var myEmployee = db.employees.find({ _id: { $gt: 2 } });
+myEmployee.forEach(doc => printjson(doc));
+
+var updateResult = db.employees.updateMany({ department: "Sales" }, { $set: { bonus: 7000 } });
+print("Documents updated:", updateResult.modifiedCount);
+
+
+db.employees.drop();
+
+
+db.employees.insertMany([
+    { _id: 1, name: "Alice", age: 30, department: "Sales", salary: 50000, bonus: 5000 },
+    { _id: 2, name: "Bob", age: 40, department: "Marketing", salary: 60000, bonus: 6000 }
+]);
+print("Document count after reinsertion:", db.employees.countDocuments());

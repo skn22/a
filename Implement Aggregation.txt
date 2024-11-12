@@ -1,0 +1,69 @@
+
+Implement Aggregation and Indexing with suitable example using MongoDB.
+i. Example Given the following document in the friends collection:
+
+ { "_id" : ObjectId(...),
+ "name" : "Alice"
+ "age" : 27
+ }
+create an index on the name field.
+ii. Execute all aggregation functions on suitable db.
+db.friends.insertOne({
+    name: "Alice",
+    age: 27
+});
+db.friends.createIndex({ name: 1 });
+
+db.sales.insertMany([
+    { item: "apple", price: 120, quantity: 10, date: new Date("2024-01-01") },
+    { item: "banana", price: 80, quantity: 20, date: new Date("2024-01-02") },
+    { item: "orange", price: 60, quantity: 15, date: new Date("2024-01-03") },
+    { item: "apple", price: 120, quantity: 5, date: new Date("2024-01-04") },
+    { item: "banana", price: 80, quantity: 30, date: new Date("2024-01-05") }
+]);
+
+db.sales.aggregate([
+    { $group: { _id: "$item", totalQuantity: { $sum: "$quantity" } } }
+]);
+
+db.sales.aggregate([
+    { $match: { price: { $gt: 100 } } }
+]);
+
+db.sales.aggregate([
+    { $sort: { price: -1 } }
+]);
+db.sales.aggregate([
+    { $project: { item: 1, totalRevenue: { $multiply: ["$price", "$quantity"] } } }
+]);
+db.sales.aggregate([
+    { $limit: 3 }
+]);
+db.sales.insertOne({ item: "apple", price: 120, quantity: 10, tags: ["fruit", "food"] });
+db.sales.aggregate([
+    { $unwind: "$tags" }
+]);
+db.suppliers.insertMany([
+    { item: "apple", supplier: "Supplier A" },
+    { item: "banana", supplier: "Supplier B" }
+]);
+db.sales.aggregate([
+    {
+        $lookup: {
+            from: "suppliers",
+            localField: "item",
+            foreignField: "item",
+            as: "supplierInfo"
+        }
+    }
+]);
+db.sales.aggregate([
+    { $count: "totalSales" }
+]);
+db.sales.aggregate([
+    { $group: { _id: null, averagePrice: { $avg: "$price" } } }
+]);
+db.sales.aggregate([
+    { $addFields: { discountedPrice: { $subtract: ["$price", 20] } } }
+]);
+

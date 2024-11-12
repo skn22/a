@@ -1,0 +1,61 @@
+2. Implement Map Reduce operation with suitable example using MongoDB.
+ Consider Liabrary Books example, for finding the number of books having pages less
+250 pages and greater than that.
+ Consider Websites hits example, to count number of hits on Internet website.
+
+use LibraryBooks;
+db.LibraryBooks.insertMany([
+    { title: "Introduction to MongoDB", pages: 200 },
+    { title: "Advanced Database Concepts", pages: 320 },
+    { title: "Learning JavaScript", pages: 180 },
+    { title: "Data Structures", pages: 450 },// Map function to categorize books based on page count
+var mapFunction = function() {
+    if (this.pages < 250) {
+        emit("Less than 250", 1);
+    } else {
+        emit("250 or more", 1);
+    }
+};
+
+var reduceFunction = function(key, values) {
+    return Array.sum(values);
+};
+
+db.LibraryBooks.mapReduce(
+    mapFunction,
+    reduceFunction,
+    { out: "BooksByPageCount" }
+);
+
+db.BooksByPageCount.find();
+
+    { title: "Algorithms Simplified", pages: 220 }
+]);
+
+use WebsiteHits
+db.WebsiteHits.insertMany([
+    { url: "https://example.com", hits: 5 },
+    { url: "https://example.com", hits: 7 },
+    { url: "https://example.com/page1", hits: 3 },
+    { url: "https://example.com/page2", hits: 8 },
+    { url: "https://example.com", hits: 2 }
+]);
+
+
+var mapFunction = function() {
+    emit(this.url, this.hits);
+};
+
+
+var reduceFunction = function(key, values) {
+    return Array.sum(values);
+};
+
+db.WebsiteHits.mapReduce(
+    mapFunction,
+    reduceFunction,
+    { out: "TotalWebsiteHits" }
+);
+
+db.TotalWebsiteHits.find();
+

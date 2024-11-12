@@ -1,0 +1,61 @@
+3 To Execute atleast 10 queries on any suitable MongoDB database that demonstrates following
+querying techniques: find and findOne (specific values) Query criteria (Query conditionals, OR
+queries, $not, Conditional semantics) Type-specific queries (Null, Regular expression, Querying
+arrays). Execute following mongodb queries by considering suitable db.
+i. if you have a user(_id, username, email, address) collection and you are interested only
+in the "username" and "email" keys to display.
+ii. look for users who are between the ages of 18 and 30 inclusive.
+iii. find people who registered before January 1, 2007
+iv. Find documents with a "user_id" equal to 12345, and documents with a "username"
+equal to "joe"
+v. find all users with the name Joe or joe
+ For example, suppose we created a collection with three elements:
+ > db.food.insert({"_id" : 1, "fruit" : ["apple", "banana", "peach"]})
+ > db.food.insert({"_id" : 2, "fruit" : ["apple", "kumquat", "orange"]})
+ > db.food.insert({"_id" : 3, "fruit" : ["cherry", "banana", "apple"]})
+find all documents with both "apple" and "banana" elements
+
+
+db.users.insertMany([
+    { _id: 1, username: "alice", email: "alice@example.com", address: "Mumbai", age: 25, registration_date: ISODate("2006-05-20"), user_id: 12345 },
+    { _id: 2, username: "bob", email: "bob@example.com", address: "Delhi", age: 29, registration_date: ISODate("2008-08-15"), user_id: 67890 },
+    { _id: 3, username: "joe", email: "joe@example.com", address: "Chennai", age: 30, registration_date: ISODate("2005-12-10"), user_id: 54321 },
+    { _id: 4, username: "Joe", email: "joe.doe@example.com", address: "Bangalore", age: 19, registration_date: ISODate("2007-01-10"), user_id: 98765 },
+    { _id: 5, username: "carol", email: "carol@example.com", address: "Hyderabad", age: 22, registration_date: ISODate("2009-09-09"), user_id: 13579 }
+]);
+
+db.users.find({}, { username: 1, email: 1, _id: 0 });
+
+
+db.users.find({ age: { $gte: 18, $lte: 30 } });
+
+
+db.users.find({ registration_date: { $lt: ISODate("2007-01-01") } });
+
+
+db.users.find({ $or: [ { user_id: 12345 }, { username: "joe" } ] });
+
+
+db.users.find({ username: { $regex: /^joe$/i } });
+
+
+db.food.insertMany([
+    { _id: 1, fruit: ["apple", "banana", "peach"] },
+    { _id: 2, fruit: ["apple", "kumquat", "orange"] },
+    { _id: 3, fruit: ["cherry", "banana", "apple"] }
+]);
+
+
+db.food.find({ fruit: { $all: ["apple", "banana"] } });
+
+
+db.users.find({ email: { $ne: null } });
+
+
+db.users.find({ address: { $regex: "ban", $options: "i" } });
+
+
+db.users.find({ username: { $ne: "joe" } });
+
+
+db.users.find({ $or: [ { age: { $gt: 25 } }, { registration_date: { $lt: ISODate("2008-01-01") } } ] });

@@ -1,0 +1,35 @@
+
+Implement Map Reduces Operation with suitable example using MongoDB. Create Map
+function to process each input document:In Map function, this refers to the document that the
+map-reduce operation is processing. The function maps the price to the cust_id for each
+document and emits the cust_id and price pair. Define the corresponding reduce function with
+two arguments keyCustId and valuesPrices. The valuesPrices is an array whose elements are the
+price values emitted by the map function and grouped by keyCustId. The function reduces the
+valuesPrice array to the sum of its elements. Perform the map-reduce on all documents in the
+orders collection using the mapFunction1 map function and the reduceFunction1 reduce
+function. This operation outputs the results to a collection named map_example
+
+
+db.orders.insertMany([
+    { cust_id: "C001", price: 200 },
+    { cust_id: "C002", price: 450 },
+    { cust_id: "C001", price: 150 },
+    { cust_id: "C003", price: 300 },
+    { cust_id: "C002", price: 200 },
+    { cust_id: "C001", price: 250 }
+]);
+
+
+var mapFunction1 = function() {
+    emit(this.cust_id, this.price);
+};
+
+var reduceFunction1 = function(keyCustId, valuesPrices) {
+    return Array.sum(valuesPrices);
+};
+db.orders.mapReduce(
+    mapFunction1,
+    reduceFunction1,
+    { out: "map_example" }
+);
+db.map_example.find();
