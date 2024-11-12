@@ -1,0 +1,49 @@
+db.Student.insertMany([
+    { Roll_no: 1, Name: "Alice", Address: "Pune" },
+    { Roll_no: 2, Name: "Bob", Address: "Mumbai" },
+    { Roll_no: 3, Name: "Charlie", Address: "Pune" },
+    // Add more students as needed
+]);
+db.Subject.insertMany([
+    { sub_code: "DBMS", sub_name: "Database Management Systems" },
+    { sub_code: "OS", sub_name: "Operating Systems" },
+    // Add more subjects as needed
+]);
+db.Marks.insertMany([
+    { Roll_no: 1, sub_code: "DBMS", marks: 85 },
+    { Roll_no: 2, sub_code: "DBMS", marks: 40 },
+    { Roll_no: 3, sub_code: "DBMS", marks: 50 },
+    { Roll_no: 1, sub_code: "OS", marks: 70 },
+    { Roll_no: 2, sub_code: "OS", marks: 30 },
+    { Roll_no: 3, sub_code: "OS", marks: 55 },
+    // Add more marks as needed
+]);
+db.Marks.aggregate([
+    { $group: { _id: "$Roll_no", averageMarks: { $avg: "$marks" } } },
+    { $lookup: {
+        from: "Student",
+        localField: "_id",
+        foreignField: "Roll_no",
+        as: "studentInfo"
+    }},
+    { $unwind: "$studentInfo" },
+    { $project: { Roll_no: "$_id", Name: "$studentInfo.Name", averageMarks: 1 } }
+]);
+db.Marks.aggregate([
+    { $match: { sub_code: "DBMS", marks: { $lt: 40 } } },
+    { $count: "failedStudents" }
+]);
+db.Student.find({ Address: "Pune" });
+db.Marks.aggregate([
+    { $group: { _id: "$Roll_no", totalMarks: { $sum: "$marks" } } },
+    { $sort: { totalMarks: -1 } },
+    { $limit: 10 },
+    { $lookup: {
+        from: "Student",
+        localField: "_id",
+        foreignField: "Roll_no",
+        as: "studentInfo"
+    }},
+    { $unwind: "$studentInfo" },
+    { $project: { Roll_no: "$_id", Name: "$studentInfo.Name", totalMarks: 1 } }
+]);

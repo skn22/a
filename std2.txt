@@ -1,0 +1,42 @@
+
+// a) Inserting and saving document
+db.students.insertOne({
+    Roll_no: 101,
+    Name: "Alice",
+    Marks: { Math: 75, Science: 80, English: 85 },
+    Internship: "Company A"
+});
+
+// b) Updating document
+db.students.updateOne(
+    { Roll_no: 101 }, 
+    { $set: { Internship: "Company B" } }
+);
+
+// c) Upserting the Internship of Student
+db.students.updateOne(
+    { Roll_no: 102 }, 
+    { $set: { Internship: "Company C" } },
+    { upsert: true }
+);
+
+// d) Updating multiple documents
+db.students.updateMany(
+    { Marks: { $gte: 60 } },
+    { $set: { Internship: "Company D" } }
+);
+
+// e) Find the students with marks < 60%
+db.students.find({
+    $or: [
+        { "Marks.Math": { $lt: 60 } },
+        { "Marks.Science": { $lt: 60 } },
+        { "Marks.English": { $lt: 60 } }
+    ]
+});
+
+// f) Print student names in ascending order
+db.students.find({}, { Name: 1 }).sort({ Name: 1 });
+
+// g) Print first 10 student info
+db.students.find().limit(10);

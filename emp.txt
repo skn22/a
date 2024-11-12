@@ -1,0 +1,32 @@
+// a) Inserting and saving document
+db.employee.insertOne({
+    emp_id: 101,
+    name: "John Doe",
+    salary: 50000,
+    email: "johndoe@example.com"
+});
+
+// b) Updating document
+db.employee.updateOne(
+    { emp_id: 101 },
+    { $set: { salary: 55000 } }
+);
+
+// c) Upserting the email ID of employee
+db.employee.updateOne(
+    { emp_id: 102 }, 
+    { $set: { email: "janedoe@example.com" } },
+    { upsert: true }
+);
+
+// d) Updating multiple documents
+db.employee.updateMany(
+    { salary: { $gte: 30000 } },
+    { $set: { salary: 35000 } }
+);
+
+// e) Find employees with salary less than 30000
+db.employee.find({ salary: { $lt: 30000 } });
+
+// f) Print employee names in ascending order
+db.employee.find({}, { name: 1 }).sort({ name: 1 });
